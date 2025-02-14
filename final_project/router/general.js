@@ -8,7 +8,7 @@ const public_users = express.Router();
 public_users.post("/register", (req,res) => {
   const usern = req.query.username
   const pwd = req.query.password
-  const msg = ''
+  var msg = ''
   if (isValid(usern)) {
     users.push({username:usern,password:pwd});
     msg='Successfully registered'
