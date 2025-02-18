@@ -1,5 +1,4 @@
 const fetch = require("node-fetch");
-
 const baseUrl = "https://wangqilu89-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/"; // Change this if needed
 
 // Function to get book by ISBN
