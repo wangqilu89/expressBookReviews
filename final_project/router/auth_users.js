@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 
-let users = [];
+let users = [{username:"wangqilu.89@gmail.com",password:"12345678"}];
 
 const isValid = (username)=>{ //returns boolean
     var filtered = users.filter((user) => {return user.username == username})
@@ -31,6 +31,7 @@ const authenticatedUser = (token)=> {
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
+   
     const name = req.body.username;
     const password = req.body.password;
 
@@ -60,7 +61,7 @@ regd_users.post("/login", (req,res) => {
         res.status(200).json({
             login: true,
             token: token,
-            data: database[isPresentIndex],
+            data: users[isPresentIndex],
         });
     } else {
 
@@ -74,38 +75,33 @@ regd_users.post("/login", (req,res) => {
 });
 
 // Add a book review
+regd_users.put("/verify",(req,res)  =>{
+    const token = req.body.token;
+  
+    return res.status(300).json(authenticatedUser(token))
+
+})
+
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  const token = req.body.token;
   const message = req.body.message;
   const isbn = req.params.isbn
-    let userlogin = authenticatedUser(token)
-    if (userlogin['login']) {
-        books[isbn]['reviews'][userlogin['data']['username']] = message
-       
-        return res.status(300).json({message: "Message Saved"});
-    }  
-    else {
-        return res.status(300).json({message: "User Authentication Failed"});
-    }
+  const userlogin = req.user
+  books[isbn]['reviews'][userlogin['data']['username']] = message
+  return res.status(300).json({message: "Message Saved"});
+  
 });
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     //Write your code here
-    const token = req.body.token;
     const message = req.body.message;
     const isbn = req.params.isbn
-      let userlogin = authenticatedUser(token)
-      if (userlogin['login']) {
-        delete books[isbn]['reviews'][userlogin['data']['username']]
-          
-         
-        return res.status(300).json({message: "Message Deleted"});
-      }  
-      else {
-          return res.status(300).json({message: "User Authentication Failed"});
-      }
+    const userlogin = req.user
+    delete books[isbn]['reviews'][userlogin['data']['username']]
+    return res.status(300).json({message: "Message Deleted"});
+      
   });
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
+module.exports.authenticatedUser = authenticatedUser;
 module.exports.users = users;

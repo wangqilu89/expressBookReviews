@@ -58,7 +58,7 @@ public_users.get('/title/:title',function (req, res) {
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  return res.status(300).json(books[req.params.isbn]['reviews']);
+  return res.status(300).json({isbn:req.params.isbn,review:books[req.params.isbn]['reviews']});
   //return res.status(300).json(books[req.params.review]['reviews']);
 });
 
